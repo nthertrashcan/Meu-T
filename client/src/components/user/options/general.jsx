@@ -3,14 +3,14 @@ import Option from "./main/option";
 
 const General = (props) => {
   return (
-    <div>
+    <div id="userGeneralOptions">
       <Option id={`${props.id}-muteBtn`} onClick={props.onMute} name={"Mute"} />
-      <Option
+      {/* <Option
         id={`${props.id}-streamBtn`}
         onClick={props.onStream}
         name="Stream"
-      />
-      <Option onClick={props.onPing} name="Ping" />
+      /> */}
+      <Option onClick={props.onPing} name={"Ping"} />
       <Option
         id={`${props.id}-microphoneBtn`}
         onClick={props.onMicrophone}

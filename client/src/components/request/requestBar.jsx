@@ -18,6 +18,7 @@ const RequestBar = (props) => {
 
   const handleClick = () => {
     setFlag(!flag);
+    props.onCheckRequests();
   };
 
   const handleAccept = (e) => {
@@ -27,12 +28,14 @@ const RequestBar = (props) => {
     setAcceptFlag(accFlag);
 
     reply(e["user"], 1);
+    setRequests(requests.filter((req, index) => req[0] !== e["user"]));
+
     props.onRequestAccept(e);
   };
 
   const handleReject = (e) => {
     reply(e["user"], 0);
-    setRequests(requests.filter((req, index) => index !== e["index"]));
+    setRequests(requests.filter((req, index) => req[0] !== e["user"]));
   };
 
   const reply = (user, flag) => {
@@ -42,10 +45,22 @@ const RequestBar = (props) => {
   };
 
   return (
-    <nav className="navbar navbar-light bg-info text-center" id="requestBar">
-      <span onClick={handleClick} className="">
-        {"Requests"}
-      </span>
+    <button
+      onClick={handleClick}
+      className="navbar navbar-light bg-info text-center"
+      id="requestBar"
+    >
+      Requests
+      <div
+        id="requestCount"
+        style={{
+          backgroundColor: flag
+            ? "white"
+            : props.requestCount
+            ? "Red"
+            : "white",
+        }}
+      ></div>
       {flag ? (
         <RequestContainer
           onAccept={(e) => handleAccept(e)}
@@ -54,7 +69,7 @@ const RequestBar = (props) => {
           acceptFlag={acceptFlag}
         />
       ) : null}
-    </nav>
+    </button>
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-import { desktopCapturer } from "electron";
+// import { desktopCapturer } from "electron";
 
 let user = "";
 const StreamFrames = (props) => {
@@ -46,67 +46,28 @@ const StreamFrames = (props) => {
   });
 
   const handleStream = (call, user, flag) => {
-    if (desktopCapturer)
-      desktopCapturer
-        .getSources({ types: ["window", "screen"] })
-        .then(async (sources) => {
-          for (const source of sources) {
-            if (source.name === "Electron") {
-              try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                  audio: false,
-                  video: {
-                    mandatory: {
-                      chromeMediaSource: "desktop",
-                      chromeMediaSourceId: source.id,
-                      minWidth: 1280,
-                      maxWidth: 1280,
-                      minHeight: 720,
-                      maxHeight: 720,
-                    },
-                  },
-                });
-
-                call = props.peer.call(user, stream);
-                callRef.current = call;
-                videoRef.current.srcObject = stream;
-                videoStreamRef.current = stream;
-
-                call.on("close", () => {
-                  props.peers[call.peer].send(`--5${props.myId}--U0`);
-                  console.log(`${call.peer} closed stream`);
-                });
-              } catch (e) {
-                console.log(e);
-              }
-              return;
-            }
-          }
+    const getUserMedia = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
         });
-    else {
-      const getUserMedia = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-          });
 
-          call = props.peer.call(user, stream);
-          callRef.current = call;
-          videoRef.current.srcObject = stream;
-          videoStreamRef.current = stream;
+        call = props.peer.call(user, stream);
+        callRef.current = call;
+        videoRef.current.srcObject = stream;
+        videoStreamRef.current = stream;
 
-          call.on("close", () => {
-            props.peers[call.peer].send(`--5${props.myId}--U0`);
-            console.log(`${call.peer} closed stream`);
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      getUserMedia();
-      if (!flag) {
-        changeStream();
+        call.on("close", () => {
+          props.peers[call.peer].send(`--5${props.myId}--U0`);
+          console.log(`${call.peer} closed stream`);
+        });
+      } catch (err) {
+        console.log(err);
       }
+    };
+    getUserMedia();
+    if (!flag) {
+      changeStream();
     }
   };
 
@@ -165,7 +126,7 @@ const StreamFrames = (props) => {
         <div id="stream">
           <div>{props.incomingStream ? props.incomingStream : user}</div>
           <video
-            style={{ width: "300px", height: "300px" }}
+            // style={{ width: "300px", height: "300px" }}
             id="streamVideo"
             autoPlay
             ref={videoRef}

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 const Input = (props) => {
   const [text, setText] = useState("");
@@ -36,10 +38,15 @@ const Input = (props) => {
         }}
         id="chat-textArea"
       ></textarea>
-      <button
-        onClick={() => handleButtonClick(text)}
-        id="chat-sendBtn"
-      ></button>
+      <div id="chat-send">
+        <button
+          id="chat-sendBtn"
+          onClick={() => handleButtonClick(text)}
+        ></button>
+        <button id="chat-sendBtnIcon" onClick={() => handleButtonClick(text)}>
+          <FontAwesomeIcon icon={faPaperPlane} />
+        </button>
+      </div>
     </div>
   );
 };

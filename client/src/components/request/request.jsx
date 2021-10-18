@@ -14,14 +14,13 @@ const Request = (props) => {
         onMouseDown={() => handleMouseDown(user, remark)}
         onMouseLeave={() => handleMouseLeave(user, remark)}
       >
-        <span id="req-user">{user.substring(0, 8)}</span>
+        <span id="req-msg">{user.substring(0, 8)}</span>
         {viewFlag[`${user}-${remark.substring(0, 10)}-${props.request[2]}`] ? (
           handleRequestView(user, remark, index)
         ) : (
-          <div id="req-msg">
-            <span>{reqMsg}</span>
-            <span className="time-right">{props.request[2]}</span>
-          </div>
+          <span className="time-right" style={{ backgroudColor: "Red" }}>
+            {props.request[2]}
+          </span>
         )}
       </div>
     );
@@ -74,9 +73,11 @@ const Request = (props) => {
         ] ? null : (
           <div id="reqView-btnContainer">
             <button
-              onMouseDown={(e) =>
+              className="requestConfirmationBtns"
+              onMouseDown={() =>
                 props.onAccept({
                   user: user,
+                  index: index,
                   text: text,
                   time: props.request[2],
                 })
@@ -85,6 +86,7 @@ const Request = (props) => {
               {"Accept"}
             </button>
             <button
+              className="requestConfirmationBtns"
               onMouseDown={() =>
                 props.onReject({
                   user,

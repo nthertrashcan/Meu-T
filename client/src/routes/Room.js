@@ -35,75 +35,9 @@ const Room = () => {
   const [requestStatus, setRequestStatus] = useState([]);
   const [iStream, setIncomingStream] = useState("");
   const [dialogBoxType, setDialogBoxType] = useState("");
+  const [requestCount, setRequestCount] = useState(0);
   let remarkUser = useRef({});
   let streamCaller = useRef("");
-
-  const processIncomingData = (data) => {
-    if (data.includes("--0")) {
-      const rawData = data.split("--0")[1];
-      const userId = rawData.split("--m")[0];
-      const m = rawData.split("--m")[1];
-      setMessage([userId, m]);
-    } else if (data.includes("--1")) {
-      const rawData = data.split("--1")[1];
-      const userId = rawData.split("--r")[0];
-      const remark = rawData.split("--r")[1];
-      console.log(`${userId} : ${remark}`);
-      setRequest([userId, remark]);
-    } else if (data.includes("--2")) {
-      const rawData = data.split("--2")[1];
-      const userId = rawData.split("--q")[0];
-      const reqS = rawData.split("--q")[1];
-      console.log(`${userId} ${reqS === "1" ? "Accepted" : "Rejected"}`);
-      setRequestReply([userId, reqS]);
-    } else if (data.includes("--3")) {
-      const rawData = data.split("--3")[1];
-      const userId = rawData.split("--r")[0];
-      const remark = rawData.split("--r")[1];
-      console.log(`${userId} gived up with remark : ${remark}`);
-    } else if (data.includes("--4")) {
-      const userId = data.split("--4")[1];
-      console.log(`Incoming Stream from ||...${userId}`);
-      handleStreamCall(userId);
-    } else if (data.includes("--5")) {
-      const rawData = data.split("--5")[1];
-      const userId = rawData.split("--U")[0];
-      const flag = rawData.split("--U")[1];
-
-      incomingStream = "";
-      setIncomingStream("");
-      const div = document.getElementById("stream");
-      if (div) {
-        const vid = document.getElementById("streamVideo");
-        if (vid) {
-          vid.src = null;
-
-          vid.hidden = true;
-        }
-        div.hidden = true;
-      }
-    } else if (data.includes("--6")) {
-      const rawData = data.split("--6")[1];
-      const userId = rawData.split("--f")[0];
-      const flag = rawData.split("--f")[1];
-      const audio = document.getElementById(`${userId}-audio`);
-      const muteBtn = document.getElementById(`${userId}-muteBtn`);
-
-      if (audio) {
-        if (flag === "0") {
-          console.log("Muted by ", userId);
-          audio.muted = true;
-          muteBtn.disabled = true;
-          muteBtn.innerText = "Muted";
-        } else {
-          console.log("Unmuted by ", userId);
-          audio.muted = false;
-          muteBtn.disabled = false;
-          muteBtn.innerText = "Mute";
-        }
-      }
-    }
-  };
 
   useEffect(() => {
     if (ROOM_ID.current) {
@@ -188,6 +122,80 @@ const Room = () => {
     });
   });
 
+  const processIncomingData = (data) => {
+    if (data.includes("--0")) {
+      const rawData = data.split("--0")[1];
+      const userId = rawData.split("--m")[0];
+      const m = rawData.split("--m")[1];
+      setMessage([userId, m]);
+    } else if (data.includes("--1")) {
+      const rawData = data.split("--1")[1];
+      const userId = rawData.split("--r")[0];
+      const remark = rawData.split("--r")[1];
+      console.log(`${userId} : ${remark}`);
+      setRequestCount(requestCount + 1);
+      setRequest([userId, remark]);
+    } else if (data.includes("--2")) {
+      const rawData = data.split("--2")[1];
+      const userId = rawData.split("--q")[0];
+      const reqS = rawData.split("--q")[1];
+      console.log(`${userId} ${reqS === "1" ? "Accepted" : "Rejected"}`);
+      if (reqS === "0") {
+        window.alert(`${userId} Rejected`);
+      }
+      setRequestReply([userId, reqS]);
+    } else if (data.includes("--3")) {
+      const rawData = data.split("--3")[1];
+      const userId = rawData.split("--r")[0];
+      const remark = rawData.split("--r")[1];
+      console.log(`${userId} gived up with remark : ${remark}`);
+    } else if (data.includes("--4")) {
+      const userId = data.split("--4")[1];
+      console.log(`Incoming Stream from ||...${userId}`);
+      handleStreamCall(userId);
+    } else if (data.includes("--5")) {
+      const rawData = data.split("--5")[1];
+      const userId = rawData.split("--U")[0];
+      const flag = rawData.split("--U")[1];
+
+      incomingStream = "";
+      setIncomingStream("");
+      const div = document.getElementById("stream");
+      if (div) {
+        const vid = document.getElementById("streamVideo");
+        if (vid) {
+          vid.src = null;
+
+          vid.hidden = true;
+        }
+        div.hidden = true;
+      }
+    } else if (data.includes("--6")) {
+      const rawData = data.split("--6")[1];
+      const userId = rawData.split("--f")[0];
+      const flag = rawData.split("--f")[1];
+      const audio = document.getElementById(`${userId}-audio`);
+      const muteBtn = document.getElementById(`${userId}-muteBtn`);
+
+      if (audio) {
+        if (flag === "0") {
+          console.log("Muted by ", userId);
+          audio.muted = true;
+          muteBtn.click();
+          muteBtn.disabled = true;
+          // muteBtn.innerText = "Muted";
+        } else {
+          console.log("Unmuted by ", userId);
+          audio.muted = false;
+          muteBtn.click();
+          muteBtn.disabled = false;
+
+          // muteBtn.innerText = "Mute";
+        }
+      }
+    }
+  };
+
   const handleStream = (call, user, flag) => {
     const getUserMedia = async () => {
       try {
@@ -227,25 +235,53 @@ const Room = () => {
     return message;
   };
 
-  const handleReading = () => {
-    setMessage([]);
-  };
-
   const handleRequest = () => {
     return request;
   };
 
+  const handleReading = () => {
+    console.log("read");
+    setMessage([]);
+  };
+
   const handleRequestReading = () => {
+    console.log("read1");
     setRequest([]);
   };
 
   const handleRequestAccept = (e) => {
     console.log("Acting on request accepted", e);
-    setRequestStatus([e["user"], true]);
+    unMute(e.user);
+    microphoneOn(e.user);
+    setRequestStatus([e.user, true]);
   };
 
   const handleRequestStatusReading = () => {
+    console.log("read2");
     setRequestStatus([]);
+  };
+
+  const unMute = (user) => {
+    const audioRef = document.getElementById(`${user}-audio`);
+    const muteBtn = document.getElementById(`${user}-muteBtn`);
+
+    if (
+      audioRef.muted &&
+      muteBtn.firstChild.getAttribute("data-icon") == "volume-mute"
+    ) {
+      audioRef.muted = false;
+      muteBtn.click();
+    }
+  };
+
+  const microphoneOn = (user) => {
+    const microphoneBtn = document.getElementById(`${user}-microphoneBtn`);
+    if (
+      microphoneBtn.firstChild.getAttribute("data-icon") == "microphone-slash"
+    ) {
+      microphoneBtn.click();
+      cPeers[user].send(`--6${myId}--f1`);
+    }
   };
 
   const handleHangUp = () => {
@@ -255,18 +291,7 @@ const Room = () => {
   };
 
   const handlePing = ({ name, id }) => {
-    remarkUser.current = { name, id };
-    document.getElementById("dialogBox").open = true;
-    setDialogBoxType("remark");
-  };
-
-  const handleRemark = (text) => {
-    console.log("Remark:", text);
-    sendRequest(remarkUser.current.name, remarkUser.current.id, text);
-    remarkUser.current = {};
-  };
-
-  const sendRequest = (name, id, remark) => {
+    const remark = "Wanna talk to you...";
     if (cPeers[id]) {
       cPeers[id].send(`--1${myId}--r${remark}`);
     }
@@ -296,6 +321,10 @@ const Room = () => {
     console.log("Rejecting call");
   };
 
+  const handleOnCheckingRequests = () => {
+    setRequestCount(0);
+  };
+
   return (
     <React.Fragment>
       <Home
@@ -307,7 +336,8 @@ const Room = () => {
         incomingStream={streamCaller.current}
         onPing={(e) => handlePing(e)}
         onRequestAccept={(e) => handleRequestAccept(e)}
-        onRemarkConfirm={(e) => handleRemark(e)}
+        requestCount={requestCount}
+        onCheckRequests={handleOnCheckingRequests}
         incomingMsg={handleIncomingMsg}
         onReading={handleReading}
         onRequest={handleRequest}

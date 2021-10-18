@@ -13,9 +13,9 @@ const UserOptions = (props) => {
         onMute={props.onMute}
         onMicrophone={props.onMicrophone}
       />
-      {props.requestStatus ? (
+      {/* {props.requestStatus ? (
         <Special onGiveUp={props.onGiveUp} name={props.name} id={props.id} />
-      ) : null}
+      ) : null} */}
     </div>
   );
 };

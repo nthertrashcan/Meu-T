@@ -64,7 +64,9 @@ const ChatBox = (props) => {
         key={key}
         className={`container ${flag ? "darker" : ""}`}
       >
-        <div style={{ cursor: "pointer" }}>{user.substring(0, 8)}</div>
+        <div id="chatUserName" style={{ cursor: "pointer" }}>
+          {user.substring(0, 8)}
+        </div>
 
         <div id={flag ? "chat-outgoingMsg" : "chat-incomingMsg"}>
           <span>{fmsg}</span>
