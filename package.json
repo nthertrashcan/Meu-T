@@ -9,8 +9,11 @@
     "peer": "^0.6.1",
     "socket.io": "^2.3.0"
   },
-  "engines":{
-"node":"12.17.x"
+  "engines": {
+    "node": "12.17.x"
+  },
+  "scripts": {
+    "start": "PROD=true node server.js",
+    "postinstall": "cd ./client && npm"
   }
-  ,"scripts": {"start":"node server.js"}
 }
